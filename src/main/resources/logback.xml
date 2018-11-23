@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--开启默认扫描  时间间隔30s-->
+<configuration debug="true" scan="true" scanPeriod="30 seconds">
+    <jmxConfigurator/>
+    <!--用来定义变量值-->
+    <property name="app.name" value="server"/>
+    <property name="monitor.name" value="monitor"/>
+    <property name="error.name" value="error"/>
+    <property name="localhost.access.name" value="localhost_access_log"/>
+
+    <!--RollingFileAppender 滚动记录文件 -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 编码 -->
+        <encoding>UTF-8</encoding>
+        <!-- 被写入的文件名和路径(位置) -->
+        <file>${server.home}/logs/${app.name}.log</file>
+        <!-- 滚动的规则  这里是时间策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 文件名称 表达式 这里 %d{} 中带的是时间格式 %i 应该是个数 -->
+            <fileNamePattern>${server.home}/logs/${app.name}.%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
+            <!-- 控制保留的归档文件的最大数量，超出数量就删除旧文件 -->
+            <maxHistory>30</maxHistory>
+            <!-- 单个文件的max大小，超过这个大小就会发生滚动 -->
+            <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <MaxFileSize>128MB</MaxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <!--格式化输出：%d表示日期,这里用的是默认值，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="qps_monitor" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoding>UTF-8</encoding>
+        <file>${server.home}/logs/${monitor.name}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${server.home}/logs/${monitor.name}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d [%thread] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="localhost_access" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoding>UTF-8</encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${server.home}/logs/localhost_access_log.%d{yyyy-MM-dd.HH}.txt</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="error_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoding>UTF-8</encoding>
+        <file>${server.home}/logs/${error.name}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${server.home}/logs/${error.name}.%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
+            <maxHistory>10</maxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <MaxFileSize>128MB</MaxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="qps_monitor" level="INFO" additivity="false">
+        <appender-ref ref="qps_monitor"/>
+    </logger>
+    <logger name="localhost_access" level="INFO" additivity="false">
+        <appender-ref ref="localhost_access"/>
+    </logger>
+    <logger name="error" level="INFO" additivity="false">
+        <appender-ref ref="error_file"/>
+    </logger>
+
+    <!-- 日志输出级别 -->
+    <root level="INFO">
+        <appender-ref ref="file"/>
+    </root>
+</configuration>
