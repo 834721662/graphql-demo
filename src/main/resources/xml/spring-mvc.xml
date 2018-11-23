@@ -13,12 +13,13 @@
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
 
-    <context:component-scan base-package="cn.zj.*"/>
+    <context:component-scan base-package="cn.zj.controller"/>
 
     <mvc:annotation-driven/>
 
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/jsp/"/>
-        <property name="suffix" value=".jsp"/>
+
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+        p:prefix="/WEB-INF/jsp/" p:suffix=".jsp">
     </bean>
 </beans>

@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @since 2018/11/11
  */
 @Controller
-@RequestMapping(value = "/")
+@RequestMapping(value = "/home")
 public class TestController {
 
-    @RequestMapping("/home")
+    @RequestMapping("/page")
     public String homePage() {
+        System.out.println("qwe");
         return "home Page";
     }
 
